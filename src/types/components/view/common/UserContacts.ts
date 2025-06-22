@@ -8,4 +8,6 @@ export interface UserContactsData {
 export interface UserContactsSettings extends IChangeable<UserContactsData> {
 	email: string;
 	phone: string;
+	messageErrorClass: string;
+	onNext: () => void;
 }

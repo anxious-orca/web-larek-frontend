@@ -36,23 +36,22 @@ export const SETTINGS: Settings = {
     basketSettings: {
         itemContainer: '.basket__list',
         itemClass: '.basket__item',
-        action: '.basket__button',
         price: '.basket__price'
     },
 
     userOrderInfoTemplate: '#order',
     userOrderInfoSettings: {
-        form: 'button[name=order]',
         paymentCard: 'button[name=card]',
         paymentCash: 'button[name=cash]',
         address: 'input[name=address]',
+        messageErrorClass: '.form__errors',
     },
 
     userContactsTemplate: '#contacts',
     userContactsSettings: {
-        form: 'button[name=contacts]',
         email: 'input[name=email]',
         phone: 'input[name=phone]',
+        messageErrorClass: '.form__errors',
     },
 
     successTemplate: '#success',
@@ -64,16 +63,7 @@ export const SETTINGS: Settings = {
 
     modalTemplate: '#modal',
 	modalSettings: {
-		close: '.modal__close',
-		content: '.modal__content',
+		title: '.modal__content',
 		footer: '.modal__footer',
-		message: '.modal__message',
-		activeClass: 'modal_active',
-		messageErrorClass: 'modal__message_error',
-	},
-
-    appState: {
-        formatCurrency: (value: number) => `${value} синапсов`,
-        storageKey: '__basketProducts',
-    },
-};
+    }
+}

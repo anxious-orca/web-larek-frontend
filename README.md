@@ -94,7 +94,7 @@ interface ILarekAPI {
 }
 ```
 
-Форматированные данные товара, которые мы храним в корзине и в localStorage
+Форматированные данные товара, которые мы храним в корзине
 
 ```
 type BasketProduct = Pick<Product, 'id' | 'title' | 'price'>
@@ -144,15 +144,6 @@ enum AppStateChanges {
 }
 ```
 
-Состояние приложения, которое мы будем хранить в localStorage
-
-```
-type PersistedState = {
-	products: BasketProduct[];
-	userData: UserData;
-};
-```
-
 ## Архитектура приложения
 
 Код приложения разделен на слои согласно парадигме MVC:  
@@ -186,7 +177,7 @@ type PersistedState = {
 Конструктор класса принимает Api и объект настроек с функцией брокера событий
 
 ##### Загружаемые с сервера данные
-- products: Map<string, Product>; - массив товаров
+- products: Map<Pick<Product, 'id'>, Product>; - массив товаров
 
 ##### Заполняемые пользователем данные
 - selectedProduct: Product | null; - выбранный товар для открытия в модальном окне
@@ -196,41 +187,21 @@ type PersistedState = {
 - order: Order; - заказ пользователя для отправки на сервер
 
 ##### Состояние интерфейса
-- openedModal: AppStateModals; - открытое модальное окно
 - isOrderReady: boolean; - проверка готовности заказа перед отвправкой на сервер
 - modalMessage: string | null; - сообщение об ошибке
 - isError: boolean; - есть ли ошибка
 - events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
 
-##### Действия с API
-- loadProductList(): Promise<void>; - загрузка массива товаров с сервера
-- loadProductItem(id: string): Promise<void>; - загрузка одного товара с сервера
-- orderTickets(): Promise<OrderResult>; - отправка заказа на сервер
-
-##### Действия с localStorage
-- restoreState(): void; - восстановить корзину и данные пользователя из localStorage
-- persistState(): void; - загрузить в localStorage
-
 ##### Пользовательские действия
 - addProduct(id: string): void; - добавить товар в корзину
 - removeProduct(id: string): void; - удалить товар из корзины
 - fillUserData(contacts: Partial<UserData>): void; - заполнить поля персональных данных
-- isValidUserData(): boolean; - валидация заполненных полей
-
-##### Вспомогательные методы
-- formatProducts(products: Product[]): ProductCard[]; - форматирование массива для главной страницы
-- formatCurrency(value: number): string; - изменение валюты 
-
-##### Методы для работы с модальными окнами
-- openModal(modal: AppStateModals): void; - открытие модального окна
-- setMessage(message: string | null, isError: boolean): void; - установка сообщения об ошибке
+- isValidUserData(): boolean; - валидация заполненных полей 
 
 ##### Настройки модели данных
 
 ```
 interface AppStateSettings {
-	formatCurrency: (value: number) => string;
-	storageKey: string;
 	onChange: (changed: AppStateChanges) => void;
 }
 ```
@@ -251,6 +222,8 @@ interface AppStateConstructor {
 - `screen` — верхнеуровневые компоненты, которые являются экранами приложения
 
 #### Базовый родительский класс View
+
+ Отвечает за хранение отображения, создание копии и отрисовки
 
 ```
 interface IView<T, S = object> {
@@ -293,68 +266,48 @@ interface ISelectable<T> {
 
 #### Класс модального окна
 
+Отвечает за контроль, открытие, закрытие, отрисовку внутри модальных окон и их контента
+
 ```
 interface ModalData<C> {
 	content: C; // контент
-	message?: string; // сообщение напр. об ошибке
 	isActive: boolean; // открытие и закрытие модального окна
-	isError?: boolean; // есть ли ошибка
 }
 
 interface ModalSettings<C> {
 	close: string; // кнопка закрытия
-	content: string; // контейнер контента
-	footer: string; // контейнер подвала
-	message: string; // контейнер сообщения
-	contentView: IView<C>; // отображение контента для рендера
-	actions: HTMLElement[]; // кнопка подтверждения
-	activeClass: string; // класс активации
-	messageErrorClass: string; // класс ошибки
-	onOpen?: () => void; // метод срабатывающий при открытии
-	onClose?: () => void; // метод срабатывающий при закритии
-}
-```
-
-##### Класс экрана модального окна
-
-```
-interface ModalScreenSettings {
-	onClose: () => void; // метод закрытия
-	onNext: () => void; // метод открытия
+	overlay: string; // контейнер оверлея
+	container: string; // контейнер контента
+	activeClass: string; // класс активного окна
+	renderContent: () => void; // метод обновления контента
+	onOpen: () => void; // метод открытия
+	onClose: () => void; // метод закрития
 }
 ```
 
 #### Класс главной страницы
 
+Отвечает за отрисовку главной страницы, каталога товаров, кнопки корзины
+
 ```
-interface PageData {
+interface PageData<C> {
+	content: C; // основной контент страницы
 	counter: number; // номер количества товаров в корзине
 	isLocked: boolean; // блокировка/разблокировка прокрутки страницы
 }
 
-interface PageSettings extends IClickable<never> {
+interface PageSettings {
 	wrapper: string; // контейнер общей обертки
 	counter: string; // контейнер счетчика корзины
 	basket: string; // кнопка корзины
 	lockedClass: string; // класс блокировки прокрутки
-}
-```
-
-##### Класс экрана главной страницы
-
-```
-interface MainData {
-	counter: number; // счетчик корзины
-	items: CardData[]; // контент галереи
-}
-
-interface MainSettings {
 	onOpenBasket: () => void; // метод открытия корзины
-	onOpenProduct: (id: string) => void; // метод открытия товара
 }
 ```
 
 #### Класс отображения товара
+
+Отвечает за создание отрисовки карточек товара в галерее, в модальном окне товара, в корзине
 
 ```
 interface CardData {
@@ -384,41 +337,26 @@ interface CardSettings extends IClickable<string> {
 
 #### Класс экрана корзины
 
+Отвечает за отображение модального окна корзины
+
 ```
 interface BasketData {
-	basketProducts: BasketProductData[]; // товары в корзине
-	isActive: boolean; // открытие и закрытие модального окна
-	isDisabled: boolean; // блокировка кнопки
+	basketProducts: CardData[]; // товары в корзине
 	total: string; // сумма заказа
 }
 
 interface BasketSettings {
+	itemContainer: string; // класс контейнера корзины
+	itemClass: string; // класс списка карточки
+	price: string; // контейнер суммы заказа
 	onRemove: (id: string) => void; // удаления товара из корзины
-	onClose: () => void; // метод закрытия
 	onNext: () => void; // метод перейти к оформлению
 }
 ```
 
-#### Класс экрана модального окна с способом оплаты и адресом
+#### Класс отображения формы с способом оплаты и адресом
 
-```
-interface UserOrderInfoFormData {
-	contacts: UserOrderInfoData; // данные клиента
-	isActive: boolean; // открытие и закрытие модального окна
-	isDisabled: boolean; // блокировка кнопки
-	message: string; // сообщение
-	total: string; // сумма заказа
-	isError: boolean; // есть ли ошибка
-}
-
-interface UserContactsFormSettings {
-	onChange: (data: UserOrderInfoData) => void;
-	onClose: () => void;
-	onNext: () => void;
-}
-```
-
-##### Класс отображения формы с способом оплаты и адресом
+Отвечает за отображение модального окна с формой оплаты и адреса клиента
 
 ```
 export interface UserOrderInfoData {
@@ -430,29 +368,14 @@ export interface UserOrderInfoSettings extends IChangeable<UserOrderInfoData> {
     paymentCard: string; // кнопка оплаты картой
     paymentCash: string; // кнопка оплаты наличными
     address: string; // input адреса
-}
-```
-
-#### Класс экрана модального окна с почтой и номером
-
-```
-interface UserContactsFormData {
-	contacts: UserContactsData; // данные клиента
-	isActive: boolean; // открытие и закрытие модального окна
-	isDisabled: boolean; // блокировка кнопки
-	message: string; // сообщение
-	total: string; // сумма заказа
-	isError: boolean; // есть ли ошибка
-}
-
-iterface UserContactsFormSettings {
-	onChange: (data: UserContactsData) => void;
-	onClose: () => void;
+	messageErrorClass: string; // контейнер для ошибки
 	onNext: () => void;
 }
 ```
 
-##### Класс отображения формы с почтой и номером
+#### Класс отображения формы с почтой и номером
+
+Отвечает за отображение модального окна с формой почты и номера клиента
 
 ```
 interface UserContactsData {
@@ -463,18 +386,24 @@ interface UserContactsData {
 interface UserContactsSettings extends IChangeable<UserContactsData> {
 	email: string; // input почты
 	phone: string; // input телефона
+	messageErrorClass: string; // контейнер для ошибки
+	onNext: () => void;
 }
 ```
 
 #### Класс экрана модального окна успешной оплаты
 
+Отвечает за отображение финального модального окна с подтверждением успешной оплаты и покупки
+
 ```
 interface SuccessData {
-	isActive: boolean; // открытие и закрытие модального окна
+	total: string; // сумма заказа
 }
 
 interface SuccessSettings {
-	onClose: () => void;
+	title: string; // контейнер заголовка
+	description: string; // контейнер описания
+	onNext: () => void;
 }
 ```
 

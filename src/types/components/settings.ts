@@ -31,23 +31,22 @@ export interface Settings {
 	basketSettings: {
 		itemContainer: string;
 		itemClass: string;
-		action: string;
 		price: string;
 	};
 
 	userOrderInfoTemplate: string;
 	userOrderInfoSettings: {
-		form: string;
 		paymentCard: string;
 		paymentCash: string;
 		address: string;
+		messageErrorClass: string;
 	};
 
 	userContactsTemplate: string;
 	userContactsSettings: {
-		form: string;
 		email: string;
 		phone: string;
+		messageErrorClass: string;
 	};
 
 	successTemplate: string;
@@ -59,16 +58,7 @@ export interface Settings {
 
 	modalTemplate: string;
 	modalSettings: {
-		close: string;
-		content: string;
+		title: string;
 		footer: string;
-		message: string;
-		activeClass: string;
-		messageErrorClass: string;
-	};
-
-	appState: {
-		formatCurrency: (value: number) => string;
-		storageKey: string;
-	};
+	}
 }

@@ -2,8 +2,7 @@ import {
 	Product,
 	UserData,
 	Order,
-	OrderResult,
-	ILarekAPI,
+	ILarekAPI
 } from './LarekApi';
 
 export type BasketProduct = Pick<Product, 'id' | 'title' | 'price'>
@@ -32,13 +31,8 @@ export enum AppStateChanges {
 	order = 'change:order',
 }
 
-export type PersistedState = {
-	products: BasketProduct[];
-	userData: UserData;
-};
-
 export interface AppState {
-	products: Map<string, Product>;
+	products: Map<Pick<Product, 'id'>, Product>;
 
 	selectedProduct: Product | null;
 	basket: Map<string, BasketProduct>;
@@ -46,33 +40,17 @@ export interface AppState {
 	userData: UserData;
 	order: Order;
 
-	openedModal: AppStateModals;
 	isOrderReady: boolean;
 	modalMessage: string | null;
 	isError: boolean;
-
-	loadProductList(): Promise<void>;
-	loadProductItem(id: string): Promise<void>;
-	orderTickets(): Promise<OrderResult>;
-
-	restoreState(): void;
-	persistState(): void;
 
 	addProduct(id: string): void;
 	removeProduct(id: string): void;
 	fillUserData(contacts: Partial<UserData>): void;
 	isValidUserData(): boolean;
-
-	formatProducts(products: Product[]): ProductCard[];
-	formatCurrency(value: number): string;
-
-	openModal(modal: AppStateModals): void;
-	setMessage(message: string | null, isError: boolean): void;
 }
 
 export interface AppStateSettings {
-	formatCurrency: (value: number) => string;
-	storageKey: string;
 	onChange: (changed: AppStateChanges) => void;
 }
 

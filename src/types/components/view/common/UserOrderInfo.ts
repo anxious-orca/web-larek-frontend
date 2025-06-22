@@ -9,4 +9,7 @@ export interface UserOrderInfoSettings extends IChangeable<UserOrderInfoData> {
     paymentCard: string;
     paymentCash: string;
     address: string;
+    messageErrorClass: string;
+	onNext: () => void;
 }
+

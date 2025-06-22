@@ -1,3 +1,7 @@
+export function formatCurrency(value: number): string {
+    return `${value} синапсов`;
+}
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
