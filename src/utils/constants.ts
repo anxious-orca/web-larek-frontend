@@ -4,12 +4,10 @@ export const API_URL = `${process.env.API_ORIGIN}/api/weblarek`;
 export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 export const SETTINGS: Settings = {
-	gallerySelector: '.gallery',
-    gallerySettings: {
-        itemClass: 'gallery__item'
-    },
     cardSettings: {
-        action: '.card__button',
+        cardCatalogTemplate: '#card-catalog',
+        cardPreviewTemplate: '#card-preview',
+        basketProductTemplate: '#card-basket',
         image: '.card__image',
 		category: '.card__category',
 		title: '.card__title',
@@ -18,52 +16,50 @@ export const SETTINGS: Settings = {
         fullClass: 'card_full',
         compactClass: 'card_compact',
         index: '.basket__item-index',
+        addBusket: '.card__button',
         delete: '.basket__item-delete',
     },
-    cardCatalogTemplate: '#card-catalog',
-    cardPreviewTemplate: '#card-preview',
-    basketProductTemplate: '#card-basket',
 
-    pageSelector: '.page',
     pageSettings: {
-        wrapper: '.page__wrapper',
-        counter: '.header__basket-counter',
         basket: '.header__basket',
-        lockedClass: 'page__wrapper_locked',
+        counter: '.header__basket-counter',
+        gallery: '.gallery',
     },
 
-    basketTemplate: '#basket',
     basketSettings: {
+        template: '#basket',
         itemContainer: '.basket__list',
-        itemClass: '.basket__item',
-        price: '.basket__price'
+        button: '.basket__button',
+        price: '.basket__price',
     },
 
-    userOrderInfoTemplate: '#order',
     userOrderInfoSettings: {
-        paymentCard: 'button[name=card]',
-        paymentCash: 'button[name=cash]',
-        address: 'input[name=address]',
+        template: '#order',
+        form: 'order',
+        paymentCard: 'card',
+        paymentCash: 'cash',
+        address: 'address',
         messageErrorClass: '.form__errors',
     },
 
-    userContactsTemplate: '#contacts',
     userContactsSettings: {
-        email: 'input[name=email]',
-        phone: 'input[name=phone]',
+        template: '#contacts',
+        form: 'contacts',
+        email: 'email',
+        phone: 'phone',
         messageErrorClass: '.form__errors',
     },
 
-    successTemplate: '#success',
 	successSettings: {
-		title: '.order-success__title',
+        template: '#success',
 		description: '.order-success__description',
-		action: '.order-success__close',
+		button: '.order-success__close',
 	},
 
-    modalTemplate: '#modal',
 	modalSettings: {
-		title: '.modal__content',
-		footer: '.modal__footer',
+		close: '.modal__close',
+	    overlay: '.modal',
+	    content: '.modal__content',
+	    activeClass: '.modal_active',
     }
 }

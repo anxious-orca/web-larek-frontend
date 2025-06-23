@@ -1,14 +1,18 @@
+import { IView } from './../../base/View';
+import { IViewCard } from './Card';
+
 export interface PageData<C> {
 	content: C;
 	counter: number;
-	isLocked: boolean;
 }
 
-export interface PageSettings {
-	wrapper: string;
-	counter: string;
+export interface IViewPage extends IView<PageData<IViewCard[]>> {
+
+}
+
+export interface IViewPageSettings {
 	basket: string;
-	lockedClass: string;
-	onOpenBasket: () => void;
+	counter: string;
+	gallery: string;
 }
 

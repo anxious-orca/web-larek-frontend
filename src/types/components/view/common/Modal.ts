@@ -1,14 +1,12 @@
-export interface ModalData<C> {
-	content: C;
-	isActive: boolean;
+export interface IViewModal {
+	content: HTMLElement;
+    open(): void;
+    close(): void;
 }
 
-export interface ModalSettings<C> {
+export interface ModalSettings {
 	close: string;
 	overlay: string;
-	container: string;
+	content: string;
 	activeClass: string;
-	renderContent: () => void;
-	onOpen: () => void;
-	onClose: () => void;
 }

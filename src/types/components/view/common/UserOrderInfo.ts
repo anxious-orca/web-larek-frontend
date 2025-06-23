@@ -1,15 +1,28 @@
-import { IChangeable } from '../../base/View';
+import { IView } from './../../base/View';
+import { IEvents } from '../../../../components/base/events';
 
 export interface UserOrderInfoData {
     payment: string;
     address: string;
 }
 
-export interface UserOrderInfoSettings extends IChangeable<UserOrderInfoData> {
+export interface IViewUserOrderInfo extends IView<UserOrderInfoData> {
+    setValue(data: UserOrderInfoData): void;
+    getValue(): UserOrderInfoData;
+    clearValue(): void;
+    disable(): void;
+}
+
+export interface IViewUserOrderInfoSettings  {
+    template: string;
+    form: string;
     paymentCard: string;
     paymentCash: string;
     address: string;
     messageErrorClass: string;
-	onNext: () => void;
+}
+
+export interface IViewUserOrderInfoConstructor {
+    new (settings: IViewUserOrderInfoSettings, events: IEvents): IViewUserOrderInfo
 }
 

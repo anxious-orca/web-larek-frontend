@@ -1,4 +1,5 @@
-import { IClickable } from '../../base/View';
+import { IView } from './../../base/View';
+import { IEvents } from './../../../../components/base/events';
 
 export interface CardData {
 	id: string;
@@ -9,8 +10,14 @@ export interface CardData {
 	price: number;
 }
 
-export interface CardSettings extends IClickable<string> {
-	action: string;
+export interface IViewCard extends IView<CardData> {
+	id: string;
+}
+
+export interface IViewCardSettings {
+	cardCatalogTemplate: string;
+	cardPreviewTemplate: string;
+	basketProductTemplate: string;
     image: string;
     category: string;
 	title: string;
@@ -21,5 +28,10 @@ export interface CardSettings extends IClickable<string> {
 	isFull: boolean;
 	isCompact: boolean;
 	index: string;
+	addBusket: string;
 	delete: string;
+}
+
+export interface IViewCardConstructor {
+    new (settings: IViewCardSettings, events: IEvents): IViewCard
 }

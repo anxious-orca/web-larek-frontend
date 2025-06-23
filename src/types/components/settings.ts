@@ -1,10 +1,8 @@
 export interface Settings {
-	gallerySelector: string;
-	gallerySettings: {
-		itemClass: string;
-	};
 	cardSettings: {
-		action: string;
+		cardCatalogTemplate: string;
+		cardPreviewTemplate: string;
+		basketProductTemplate: string;
 		image: string;
 		category: string;
 		title: string;
@@ -13,52 +11,50 @@ export interface Settings {
 		fullClass: string;
 		compactClass: string;
 		index: string;
+		addBusket: string;
 		delete: string;
 	};
-	cardCatalogTemplate: string;
-	cardPreviewTemplate: string;
-	basketProductTemplate: string;
 
-	pageSelector: string;
 	pageSettings: {
-		wrapper: string;
-		counter: string;
 		basket: string;
-		lockedClass: string;
+		counter: string;
+		gallery: string;
 	};
 
-	basketTemplate: string;
 	basketSettings: {
+		template: string;
 		itemContainer: string;
-		itemClass: string;
+		button: string;
 		price: string;
 	};
 
-	userOrderInfoTemplate: string;
 	userOrderInfoSettings: {
+		template: string;
+		form: string;
 		paymentCard: string;
 		paymentCash: string;
 		address: string;
 		messageErrorClass: string;
 	};
 
-	userContactsTemplate: string;
 	userContactsSettings: {
+		template: string;
+		form: string;
 		email: string;
 		phone: string;
 		messageErrorClass: string;
 	};
 
-	successTemplate: string;
 	successSettings: {
-		title: string;
+		template: string;
 		description: string;
-		action: string;
+		button: string;
 	},
 
-	modalTemplate: string;
 	modalSettings: {
-		title: string;
-		footer: string;
+		close: string;
+		overlay: string;
+		content: string;
+		activeClass: string;
 	}
 }

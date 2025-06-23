@@ -1,3 +1,4 @@
+import { Api } from './../../../components/base/api';
 export interface Product {
 	id: string;
 	description: string;
@@ -24,7 +25,7 @@ export interface OrderResult {
 	total: number;
 }
 
-export interface ILarekAPI {
+export interface ILarekAPI extends Api {
 	getProductList: () => Promise<Product[]>;
 	getProductItem: (id: string) => Promise<Product>;
 	orderProducts: (order: Order) => Promise<OrderResult>;
