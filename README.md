@@ -182,7 +182,7 @@ enum AppStateChanges {
 - _userData: UserData; - объект контактных данных пользователя
 - partialUserData: Partial<UserData>; - сеттер контактных данных пользователя
 
-- validateAddress(input: string): string | null - метод валидации input адреса
+- validateAddress(data: Partial<UserData>): string | null - метод валидации input адреса
 - validateContacts(data: Partial<UserData>): string | null - метод валидации input почты и телефона
 
 - isAddressReady: boolean; - проверка готовности адреса

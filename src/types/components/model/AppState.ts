@@ -40,7 +40,7 @@ export interface IAppState {
 
 	_userData: UserData;
 	partialUserData: Partial<UserData>;
-	validateAddress(input: string): string | null;
+	validateAddress(data: Partial<UserData>): string | null;
 	validateContacts(data: Partial<UserData>): string | null;
 
 	isAddressReady: boolean;

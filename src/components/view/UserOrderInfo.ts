@@ -26,7 +26,7 @@ export class ViewUserOrderInfo implements IViewUserOrderInfo {
         });
         this.paymentCard.addEventListener('click', () => this.controlButton(this.paymentCard));
         this.paymentCash.addEventListener('click', () => this.controlButton(this.paymentCash));
-        this.address.addEventListener('input', () => events.emit(settings.eventInput, {address: this.address.value}));
+        this.address.addEventListener('input', () => events.emit(settings.eventInput, this.getValue()));
     }
 
     disable() {

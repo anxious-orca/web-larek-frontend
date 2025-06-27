@@ -104,10 +104,17 @@ export class AppState implements IAppState {
         }
     }
 
-    validateAddress(input: string): string | null {
-        if (input && !/^[А-Яа-яЁё\s,.]+, д\.\d+(\/\d+)?, кв\.\d+$/.test(input)) {
-            return 'Необходимый формат: Город, улица, д.99/1, кв.195';
+    validateAddress(data: Partial<UserData>): string | null {
+        const errors: string[] = [];
+        if (!data.payment || !data.address) {
+			errors.push('Оплата и адрес обязательны');
+		}
+        if (data.address && !/^[А-Яа-яЁё\s,.]+, д\.\d+(\/\d+)?, кв\.\d+$/.test(data.address)) {
+            errors.push('Формат адреса: Город, улица, д.99/1, кв.195');
         }
+        if (errors.length) {
+			return errors.join('. ') + '.';
+		}
         return null;
     }
 
@@ -133,7 +140,7 @@ export class AppState implements IAppState {
             this._basket.size > 0 
             && !!this._userData.payment 
             && !!this._userData.address 
-            && !!!this.validateAddress(this._userData.address)
+            && !!!this.validateAddress(this._userData)
         );
     }
 

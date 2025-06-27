@@ -6,8 +6,8 @@ import { IViewPage } from './../../types/components/view/Page';
 import { IViewModal } from './../../types/components/view/Modal';
 import { IViewCardConstructor, IViewCardSettings } from './../../types/components/view/Card';
 import { IViewBasket } from './../../types/components/view/Basket';
-import { IViewUserOrderInfo } from './../../types/components/view/UserOrderInfo';
-import { IViewUserContacts } from './../../types/components/view/UserContacts';
+import { IViewUserOrderInfo, UserOrderInfoData } from './../../types/components/view/UserOrderInfo';
+import { IViewUserContacts, UserContactsData } from './../../types/components/view/UserContacts';
 import { IViewSuccess } from './../../types/components/view/Success';
 
 export class Presenter {
@@ -93,9 +93,9 @@ export class Presenter {
             this.modal.content = this.userOrderInfo.render();
             this.userOrderInfo.disable();
             // событие изменения input адреса
-            this.events.on<{address: string}>(AppStateChanges.address, (data) => {
+            this.events.on<UserOrderInfoData>(AppStateChanges.address, (data) => {
                 this.model.partialUserData = this.userOrderInfo.getValue();
-                let error = this.model.validateAddress(data.address);
+                let error = this.model.validateAddress(data);
                 if (error) {
                     this.userOrderInfo.setMessage(error);
                     this.userOrderInfo.disable();
@@ -103,8 +103,6 @@ export class Presenter {
                     this.userOrderInfo.setMessage('');
                     if (this.model.isAddressReady) {
                         this.userOrderInfo.enable();
-                    } else {
-                        this.userOrderInfo.setMessage('Заполните поля');
                     }
                 }
             })
@@ -115,7 +113,7 @@ export class Presenter {
             this.modal.content = this.userContacts.render();
             this.userContacts.disable();
             // событие изменения input контактов
-            this.events.on<{email: string, phone: string}>(AppStateChanges.contacts, (data) => {
+            this.events.on<UserContactsData>(AppStateChanges.contacts, (data) => {
                 this.model.partialUserData = this.userContacts.getValue();
                 let error = this.model.validateContacts(data);
                 if (error) {
@@ -125,8 +123,6 @@ export class Presenter {
                     this.userContacts.setMessage('');
                     if (this.model.isOrderReady) {
                         this.userContacts.enable();
-                    } else {
-                        this.userContacts.setMessage('Заполните поля');
                     }
                 }
             })

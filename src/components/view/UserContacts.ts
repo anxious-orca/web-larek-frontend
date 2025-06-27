@@ -22,8 +22,8 @@ export class ViewUserContacts implements IViewUserContacts {
 			evt.preventDefault();
 			events.emit(settings.eventSubmit, this.getValue());
 		});
-        this.email.addEventListener('input', () => events.emit(settings.eventInput, {email: this.email.value, phone: this.phone.value}));
-        this.phone.addEventListener('input', () => events.emit(settings.eventInput, {email: this.email.value, phone: this.phone.value}));
+        this.email.addEventListener('input', () => events.emit(settings.eventInput, this.getValue()));
+        this.phone.addEventListener('input', () => events.emit(settings.eventInput, this.getValue()));
     }
 
     disable() {
