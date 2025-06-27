@@ -8,11 +8,9 @@ export interface Settings {
 		title: string;
 		description: string;
 		price: string;
-		fullClass: string;
-		compactClass: string;
 		index: string;
-		addBusket: string;
-		delete: string;
+		buttonAddToBasket: string;
+		buttonDelete: string;
 	};
 
 	pageSettings: {
@@ -30,18 +28,18 @@ export interface Settings {
 
 	userOrderInfoSettings: {
 		template: string;
-		form: string;
 		paymentCard: string;
 		paymentCash: string;
 		address: string;
+		button: string;
 		messageErrorClass: string;
 	};
 
 	userContactsSettings: {
 		template: string;
-		form: string;
 		email: string;
 		phone: string;
+		button: string;
 		messageErrorClass: string;
 	};
 
@@ -52,7 +50,7 @@ export interface Settings {
 	},
 
 	modalSettings: {
-		close: string;
+		buttonClose: string;
 		overlay: string;
 		content: string;
 		activeClass: string;

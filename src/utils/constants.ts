@@ -13,11 +13,9 @@ export const SETTINGS: Settings = {
 		title: '.card__title',
 		description: '.card__text',
 		price: '.card__price',
-        fullClass: 'card_full',
-        compactClass: 'card_compact',
         index: '.basket__item-index',
-        addBusket: '.card__button',
-        delete: '.basket__item-delete',
+        buttonAddToBasket: '.card__button',
+        buttonDelete: '.basket__item-delete',
     },
 
     pageSettings: {
@@ -35,18 +33,18 @@ export const SETTINGS: Settings = {
 
     userOrderInfoSettings: {
         template: '#order',
-        form: 'order',
-        paymentCard: 'card',
-        paymentCash: 'cash',
-        address: 'address',
+        paymentCard: 'div.order__buttons button[name="card"]',
+        paymentCash: 'div.order__buttons button[name="cash"]',
+        address: 'label.order__field input[name="address"]',
+        button: '.order__button',
         messageErrorClass: '.form__errors',
     },
 
     userContactsSettings: {
         template: '#contacts',
-        form: 'contacts',
-        email: 'email',
-        phone: 'phone',
+        email: 'label.order__field_email input[name="email"]',
+        phone: 'label.order__field_phone input[name="phone"]',
+        button: '.button',
         messageErrorClass: '.form__errors',
     },
 
@@ -57,9 +55,9 @@ export const SETTINGS: Settings = {
 	},
 
 	modalSettings: {
-		close: '.modal__close',
+		buttonClose: '.modal__close',
 	    overlay: '.modal',
 	    content: '.modal__content',
-	    activeClass: '.modal_active',
+	    activeClass: 'modal_active',
     }
 }

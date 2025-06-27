@@ -1,43 +1,49 @@
 import {
 	Product,
-	UserData
+	UserData,
+	Order
 } from './LarekApi';
 
-export type BasketProduct = Pick<Product, 'id' | 'title' | 'price'>
-
-export type ProductCard = Pick<Product, 'image' | 'title' | 'category' | 'price'>
-
-export type UserOrderInfo = Pick<UserData, 'payment'| 'address'>
-
-export type UserContacts = Pick<UserData, 'email' | 'phone'>
+export type BasketProduct = Pick<Product, 'id' | 'title' | 'price'> & {index: string};
 
 export enum AppStateModals {
 	product = 'modal:product', 
 	basket = 'modal:basket',
 	address = 'modal:address',
 	contacts = 'modal:contacts',
-	success = 'modal:success',
-	none = 'modal:none',
+	success = 'modal:success'
 }
 
 export enum AppStateChanges {
 	products = 'change:product',
-	basket = 'change:basket',
 	order = 'change:order',
+	basket = 'change:basket',
+	addToBasket = 'change:addToBasket',
+	removeFromBasket = 'change:removeFromBasket',
+	address = 'change:inputAddress',
+	contacts = 'change:inputContacts'
 }
 
-export interface AppState {
-	products: Map<Pick<Product, 'id'>, Product>;
-	product: Product;
+export interface IAppState {
+	_products: Map<string, Product>;
+	products: Product[];
+	getProduct(id: string): Product;
 
-	basket: Map<string, BasketProduct>;
+	_basket: Map<string, BasketProduct>;
+	basket: BasketProduct[];
 	basketTotal: number;
-	userData: UserData;
-	isOrderReady: boolean;
-
+	basketSize: number;
+	formatProduct(product: Product): BasketProduct;
 	addProduct(id: string): void;
 	removeProduct(id: string): void;
+	clearBasket(): void;
 
-	fillUserData(contacts: Partial<UserData>): void;
-	isValidUserData(): boolean;
+	_userData: UserData;
+	partialUserData: Partial<UserData>;
+	validateAddress(input: string): string | null;
+	validateContacts(data: Partial<UserData>): string | null;
+
+	isAddressReady: boolean;
+	isOrderReady: boolean;
+	order: Order;
 }

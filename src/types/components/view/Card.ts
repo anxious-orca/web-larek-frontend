@@ -1,8 +1,8 @@
-import { IView } from './../../base/View';
-import { IEvents } from './../../../../components/base/events';
+import { IEvents } from './../../../components/base/Events';
 
 export interface CardData {
 	id: string;
+	index: string;
 	image: string;
     category: string;
 	title: string;
@@ -10,8 +10,9 @@ export interface CardData {
 	price: number;
 }
 
-export interface IViewCard extends IView<CardData> {
+export interface IViewCard {
 	id: string;
+	render(data?: Partial<CardData>): HTMLElement;
 }
 
 export interface IViewCardSettings {
@@ -23,13 +24,12 @@ export interface IViewCardSettings {
 	title: string;
     description: string;
     price: string;
-	fullClass: string;
-	compactClass: string;
 	isFull: boolean;
 	isCompact: boolean;
 	index: string;
-	addBusket: string;
-	delete: string;
+	buttonAddToBasket: string;
+	buttonDelete: string;
+	event: string;
 }
 
 export interface IViewCardConstructor {

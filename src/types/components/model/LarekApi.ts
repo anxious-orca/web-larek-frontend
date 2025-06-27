@@ -1,4 +1,10 @@
-import { Api } from './../../../components/base/api';
+import { Api } from './../../../components/base/Api';
+
+export type ApiListResponse<Type> = {
+    total: number,
+    items: Type[]
+}
+
 export interface Product {
 	id: string;
 	description: string;
@@ -17,7 +23,7 @@ export interface UserData {
 
 export interface Order extends UserData {
     total: number;
-    items: Pick<Product, 'id'>[];
+    items: string[];
 }
 
 export interface OrderResult {

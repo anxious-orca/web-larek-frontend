@@ -4,8 +4,8 @@ export interface IViewModal {
     close(): void;
 }
 
-export interface ModalSettings {
-	close: string;
+export interface IViewModalSettings {
+	buttonClose: string;
 	overlay: string;
 	content: string;
 	activeClass: string;

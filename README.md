@@ -4,13 +4,17 @@
 
 Структура проекта:
 - src/ — исходные файлы проекта
-- src/components/ — папка с JS компонентами
+- src/components/ — папка с JS компонентами (реализация проекта) Модели данных и АПИ
 - src/components/base/ — папка с базовым кодом
+- src/components/model/ - модель данных и АПИ
+- src/components/view/ - отображения
+
 
 Важные файлы:
 - src/pages/index.html — HTML-файл главной страницы
 - src/types/ — папка с типами
 - src/index.ts — точка входа приложения
+- src/components/base/Presenter.ts - презентер
 - src/scss/styles.scss — корневой файл стилей
 - src/utils/constants.ts — файл с константами
 - src/utils/utils.ts — файл с утилитами
@@ -71,7 +75,7 @@ interface UserData {
 ```
 interface Order extends UserData {
     total: number;
-    items: Pick<Product, 'id'>[];
+    items: string[];
 }
 ```
 
@@ -87,63 +91,48 @@ interface OrderResult {
 Интерфейс API приложения
 
 ```
-interface ILarekAPI {
+interface ILarekAPI extends Api {
 	getProductList: () => Promise<Product[]>;
 	getProductItem: (id: string) => Promise<Product>;
 	orderProducts: (order: Order) => Promise<OrderResult>;
 }
 ```
 
-Форматированные данные товара, которые мы храним в корзине
+Данные товара, которые мы храним в корзине
 
 ```
-type BasketProduct = Pick<Product, 'id' | 'title' | 'price'>
+type BasketProduct = Pick<Product, 'id' | 'title' | 'price'> & {index: string};
 ```
 
-Форматированные данные товара, для отображения карточек на главной странице
-
-```
-type ProductCard = Pick<Product, 'image' | 'title' | 'category' | 'price'>
-```
-
-Форматированные данные пользователя, в 1 попапе оплаты и адреса
-
-```
-type UserOrderInfo = Pick<UserData, 'payment'| 'address'>
-```
-
-Форматированные данные пользователя, в 2 попапе email и номера телефона
-
-```
-type UserContacts = Pick<UserData, 'email' | 'phone'>
-```
-
-События открытия и закрытия модальных окон
+События открытия модальных окон
 
 ```
 enum AppStateModals {
-	product = 'modal:product',
+	product = 'modal:product', 
 	basket = 'modal:basket',
 	address = 'modal:address',
 	contacts = 'modal:contacts',
-	success = 'modal:success',
-	none = 'modal:none',
+	success = 'modal:success'
 }
 ```
 
-События изменений в модели данных
+События изменений данных
 
 ```
 enum AppStateChanges {
 	products = 'change:product',
-	basket = 'change:basket',
 	order = 'change:order',
+	basket = 'change:basket',
+	addToBasket = 'change:addToBasket',
+	removeFromBasket = 'change:removeFromBasket',
+	address = 'change:inputAddress',
+	contacts = 'change:inputContacts'
 }
 ```
 
 ## Архитектура приложения
 
-Код приложения разделен на слои согласно парадигме MVC:  
+Код приложения разделен на слои согласно парадигме MVP:  
 -слой данных(Model), отвечает за хранение и изменение данных  
 -слой представления(View), отвечает за отображение данных на странице  
 -слой презентера(Presenter), связывает данные и представление  
@@ -172,35 +161,37 @@ enum AppStateChanges {
 Модель в проекте представлена классом `AppState`, который содержит в себе все данные и логику работы с ними.  
 Модель уведомляет об изменениях данных через EventEmitter экземпляр которого передается ей в конструкторе.
 
-##### Хранимые данные
-- products: Map<Pick<Product, 'id'>, Product>; - массив товаров
-- product: Product; - геттер 1 товара
-- basket: Map<string, BasketProduct>; - массив товаров в корзине
-- basketTotal: number; - общая сумма товаров в корзине
-- userData: UserData; - вводимые данные пользователя
-- isOrderReady: boolean; - проверка готовности заказа перед отвправкой на сервер
+##### Свойства и методы товаров
+- _products: Map<string, Product>; - Map объект товаров
+- products: Product[]; - сеттер и геттер товаров
 
-##### Пользовательские действия
-- addProduct(id: string): void; - добавить товар в корзину
-- removeProduct(id: string): void; - удалить товар из корзины
-- fillUserData(contacts: Partial<UserData>): void; - заполнить поля персональных данных
-- isValidUserData(): boolean; - валидация заполненных полей 
+- getProduct(id: string): Product; - метод получения 1 товара
+
+##### Свойства и методы коризины
+- _basket: Map<string, BasketProduct>; - Map объект товаров в корзине
+- basket: BasketProduct[]; - геттер товаров в корзине
+- basketTotal: number; - геттер суммы товаров в корзине
+- basketSize: number; - геттер количества товаров в корзине
+
+- formatProduct(product: Product): BasketProduct; - метод форматирования товара в товар корзины
+- addProduct(id: string): void; - метод добавления товара в корзину
+- removeProduct(id: string): void; - метод удаления товара из корзины
+- clearBasket(): void; - метод очищения корзины
+
+##### Свойства и методы заказа и валидации форм
+- _userData: UserData; - объект контактных данных пользователя
+- partialUserData: Partial<UserData>; - сеттер контактных данных пользователя
+
+- validateAddress(input: string): string | null - метод валидации input адреса
+- validateContacts(data: Partial<UserData>): string | null - метод валидации input почты и телефона
+
+- isAddressReady: boolean; - проверка готовности адреса
+- isOrderReady: boolean; - проверка готовности заказа перед отвправкой на сервер
+- order: Order; - геттер заказа
 
 ### Слой представления
 
 Все классы представления отвечают за отображение внутри контейнера (DOM - элемент) передаваемых в них данных.
-
-#### Базовый родительский класс View
-
-Базовый класс который предоставляет свойство для хранения отображения и обязательный метод для отрисовки контента.
-
-```
-interface IView<T> {
-	element: HTMLElement;
-	render(data?: Partial<T>): HTMLElement;
-}
-
-```
 
 #### Класс отображения товара
 
@@ -209,6 +200,7 @@ interface IView<T> {
 ```
 interface CardData {
 	id: string; // id товара
+	index: string; // позиция товара в корзине
 	image: string; // изображение товара
     category: string; // категория товара
 	title: string; // название товара
@@ -216,12 +208,13 @@ interface CardData {
 	price: number; // цена товара
 }
 
-interface IViewCard extends IView<CardData> {
+interface IViewCard {
 	id: string; // геттер id для обращения к конкретному продукту в модели
+	render(data?: Partial<CardData>): HTMLElement; // метод рендера разметки
 }
 
 interface IViewCardSettings {
-	cardCatalogTemplate: string; // темплейт для основной карточки
+	cardCatalogTemplate: string; // темплейт для карточки в галерее
 	cardPreviewTemplate: string; // темплейт для карточки в модалке
 	basketProductTemplate: string; // темплейт для карточки в корзине
     image: string; // контейнер для изображения
@@ -229,13 +222,12 @@ interface IViewCardSettings {
 	title: string; // контейнер для названия
     description: string; // контейнер для описания
     price: string; // контейнер для цены
-	fullClass: string; // класс для отображения карточки в модалке
-	compactClass: string; // класс для отображения карточки в корзине
 	isFull: boolean; // какой вид карточки отображать
 	isCompact: boolean; // какой вид карточки отображать
-	index: string; // контейнер для
-	addBusket: string; // кнопка добавить в корзину
-	delete: string; // кнопка удалить из корзины
+	index: string; // контейнер для индекса в корзине
+	buttonAddToBasket: string; // кнопка добавить в корзину
+	buttonDelete: string; // кнопка удалить из корзины
+	event: string; // событие которое происходит при клике на карточку/кнопку
 }
 
 interface IViewCardConstructor {
@@ -253,14 +245,16 @@ interface PageData<C> {
 	counter: number; // число в корзине
 }
 
-interface IViewPage extends IView<PageData<IViewCard[]>> {
-
+interface IViewPage {
+	addContent(data: PageData<HTMLElement[]>): void; // добавление контента на страницу
+	changeCounter(counter: number): void; // изменение счетчика корзины
 }
 
 interface IViewPageSettings {
 	basket: string; // кнопка корзины
 	counter: string; // контейнер счетчика корзины
 	gallery: string; // контейнер для главного контента
+	event: string; // событие которое происходит при клике на корзину
 }
 ```
 
@@ -270,43 +264,42 @@ interface IViewPageSettings {
 
 ```
 interface IViewModal {
-	content: HTMLElement;
-    open(): void;
-    close(): void;
+	content: HTMLElement; // сеттер контента
+    open(): void; // метод открытия 
+    close(): void; // метод закрытия
 }
 
-interface ModalSettings {
-	close: string; // кнопка закрытия
-	overlay: string; // оверлей для закрытия
+interface IViewModalSettings {
+	buttonClose: string; // кнопка закрытия
+	overlay: string; // оверлей
 	content: string; // контейнер контента
 	activeClass: string; // класс активного окна
 }
 ```
 
-#### Класс экрана корзины
+#### Класс корзины
 
 Отвечает за отображение модального окна корзины
 
 ```
 interface BasketData {
-	basketProducts: CardData[]; // данные карточек в корзине
-	total: string; // сумма заказа
+	basketProducts: HTMLElement[]; // отображения карточек в корзине
+	total: number; // сумма заказа
 }
 
-interface IViewBusket extends IView<BasketData> {
+interface IViewBasket {
 	disable(): void; // метод отключения кнопки
+	enable(): void; // метод включения кнопки
+	render(data?: BasketData): HTMLElement; // метод отрисовки корзины
 }
 
-interface BasketSettings {
+interface IViewBasketSettings {
 	template: string; // темплейт 
 	itemContainer: string; // контейнер для карточке
 	button: string; // кнопка оформления заказа
 	price: string; // контейнер для суммы заказа
+	event: string; // событие которое происходит при клике на кнопку
 }
-
-interface IViewBusketConstructor {
-	new (settings: BasketSettings, events: IEvents): IViewBusket
-} // конструктор корзины
 ```
 
 #### Класс отображения формы с способом оплаты и адресом
@@ -319,25 +312,29 @@ interface UserOrderInfoData {
     address: string; // адресс доставка
 }
 
-interface IViewUserOrderInfo extends IView<UserOrderInfoData> {
+interface IViewUserOrderInfo {
+	disable(): void; // метод отключения кнопки
+	enable(): void; // метод включения кнопки
+	controlButton(button: HTMLButtonElement): void; // метод контролирующий активацию кнопок оплаты
+    activate(button: HTMLButtonElement): void; // метод активирования кнопки
+    deactivate(button: HTMLButtonElement): void; // метод деактивирования кнопки
     setValue(data: UserOrderInfoData): void; // метод устанавливающий value в input
     getValue(): UserOrderInfoData; // метод получающий value из input
     clearValue(): void; // метод очищающий форму
-    disable(): void; // метод отключения кнопки
+    setMessage(data: string): void; // метод устанавливающий текст ошибки
+    render(data?: UserOrderInfoData): HTMLElement; // метод рендера разметки
 }
 
 interface IViewUserOrderInfoSettings  {
     template: string; // темплейт
-    form: string; // форма
     paymentCard: string; // кнопка оплаты картой
     paymentCash: string; // кнопка оплаты наличными
     address: string; // input адреса
     messageErrorClass: string; // контейнер ошибки
+	button: string; // кнопка submit
+	eventSubmit: string; // событие которое происходит при submit формы
+    eventInput: string; // событие которое происходит при изменении input
 }
-
-interface IViewUserOrderInfoConstructor {
-    new (settings: IViewUserOrderInfoSettings, events: IEvents): IViewUserOrderInfo
-} // конструктор формы оплаты и адреса клиента
 ```
 
 #### Класс отображения формы с почтой и номером
@@ -350,24 +347,25 @@ interface UserContactsData {
 	phone: string; // телефон клиента
 }
 
-interface IViewUserContacts extends IView<UserContactsData> {
+interface IViewUserContacts {
+	disable(): void; // метод отключения кнопки
+	enable(): void; // метод включения кнопки
 	setValue(data: UserContactsData): void; // метод устанавливающий value в input
 	getValue(): UserContactsData; // метод получающий value из input
 	clearValue(): void; // метод очищающий форму
-	disable(): void; // метод отключения кнопки
+	setMessage(data: string): void; // метод устанавливающий текст ошибки
+	render(data?: UserContactsData): HTMLElement; // метод рендера разметки
 }
 
 interface IViewUserContactsSettings {
 	template: string; // темплейт
-	form: string; // форма
 	email: string; // input почты
 	phone: string; // input телефона
 	messageErrorClass: string; // контейнер ошибки
+	button: string; // кнопка submit
+	eventSubmit: string; // событие которое происходит при submit формы
+    eventInput: string; // событие которое происходит при изменении input
 }
-
-interface IViewUserContactsConstructor {
-	new (settings: IViewUserContactsSettings, events: IEvents): IViewUserContacts
-} // конструктор формы почты и номера клиента
 ```
 
 #### Класс экрана модального окна успешной оплаты
@@ -377,22 +375,19 @@ interface IViewUserContactsConstructor {
 ```
 
 interface SuccessData {
-	total: string; // сумма заказа
+	total: number; // сумма заказа
 }
 
-interface IVIewSuccess extends IView<SuccessData> {
-
+interface IViewSuccess {
+	render(data: SuccessData): HTMLElement; // метод рендера разметки
 }
 
-interface SuccessSettings {
+interface IViewSuccessSettings {
 	template: string; // темплейт
 	description: string; // контейнер для описания
 	button: string; // кнопка подтверждения
+	event: string; // событие которое происходит при закрытии окна
 }
-
-interface IVIewSuccessConstructor {
-	new (settings: SuccessSettings, events: IEvents): IVIewSuccess
-} // конструктор модального окна успешной оплаты
 ```
 
 ### Слой коммуникации
@@ -411,22 +406,26 @@ interface ILarekAPI extends Api {
 
 ## Взаимодействие компонентов
 
-Связывание компонентов происходит при помощи презентера.  
-Взаимодействие осуществляется за счет событий генерируемых с помощью брокера событий и обработчиков этих событий.
+Связывание компонентов происходит при помощи презентера `Presenter.ts`.  
+Взаимодействие осуществляется за счет событий генерируемых с помощью брокера событий и обработчиков этих событий.  
 В `index.ts` создаются экземпляры API, модели, главного экрана и модальных экранов, необходимые классы передаются в презентер для реализации логики событий и связывания модели данных и отображения.
 
 События которые происходят в системе:
 
-- product = 'modal:product' - открытие модального окна с товаром
-- basket = 'modal:basket' - открытие модального окна с корзиной
-- address = 'modal:address' - открытие модального окна с адресом
-- contacts = 'modal:contacts' - открытие модального окна с почтой и телефоном
-- success = 'modal:success' - открытие модального окна с подтверждением
-- none = 'modal:none' - никакое модальное окно не открыто (закрытие окна)
+- 'modal:product' - открытие модального окна с товаром
+- 'modal:basket' - открытие модального окна с корзиной
+- 'modal:address' - открытие модального окна с адресом
+- 'modal:contacts' - открытие модального окна с почтой и телефоном
+- 'modal:success' - открытие модального окна с подтверждением
 
 - 'change:product' - изменение списка товаров
-- 'change:basket' - изменение в составе корзины
 - 'change:order' - изменение в заказе, данных клиента
+- 'change:basket' - изменение в составе корзины
+- 'change:addToBasket' - добавление товара в корзину
+- 'change:removeFromBasket' - удаление товара из корзины
+- 'change:inputAddress' - изменение в input адреса
+- 'change:inputContacts' - изменение в input контактов
+
 
 
 

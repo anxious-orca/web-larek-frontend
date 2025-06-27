@@ -4,14 +4,15 @@
 .modal {
   @include mixins.sublayer;
   // height: max-content;
-  position: absolute;
+  position: fixed;
   display: none;
   justify-content: center;
   background-color: $overlayBackground;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   z-index: 100;
-  padding-top: 5vh;
-  padding-bottom: 5vh;
-  box-sizing: border-box;
 
   &_active {
     display: flex;
