@@ -1,1 +1,0 @@
-export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
