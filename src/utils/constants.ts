@@ -16,6 +16,12 @@ export const SETTINGS: Settings = {
         index: '.basket__item-index',
         buttonAddToBasket: '.card__button',
         buttonDelete: '.basket__item-delete',
+        categorySoft: 'card__category_soft',
+        categoryHard: 'card__category_hard',
+        categoryOther: 'card__category_other',
+        categoryAdditional: 'card__category_additional',
+        categoryButton:'card__category_button'
+
     },
 
     pageSettings: {

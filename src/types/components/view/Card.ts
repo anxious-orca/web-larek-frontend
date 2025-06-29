@@ -33,6 +33,11 @@ export interface IViewCardSettings {
 	buttonAddToBasket: string;
 	buttonDelete: string;
 	event: string;
+	categorySoft: string;
+	categoryHard: string;
+	categoryOther: string;
+	categoryAdditional: string;
+	categoryButton: string;
 }
 
 export interface IViewCardConstructor {

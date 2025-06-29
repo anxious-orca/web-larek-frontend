@@ -11,6 +11,11 @@ export interface Settings {
 		index: string;
 		buttonAddToBasket: string;
 		buttonDelete: string;
+		categorySoft: string;
+        categoryHard: string;
+        categoryOther: string;
+        categoryAdditional: string;
+        categoryButton: string;
 	};
 
 	pageSettings: {

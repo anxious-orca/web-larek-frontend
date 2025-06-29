@@ -62,22 +62,22 @@ export class ViewCard implements IViewCard {
     categoryColorControl(data: string) {
         switch (data) {
             case 'софт-скил': 
-                this.category.classList.add('card__category_soft');
+                this.category.classList.add(this.settings.categorySoft);
                 break;
             case 'хард-скил': 
-                this.category.classList.add('card__category_hard');
+                this.category.classList.add(this.settings.categoryHard);
                 break;
             case 'другое': 
-                this.category.classList.add('card__category_other');
+                this.category.classList.add(this.settings.categoryOther);
                 break;
             case 'дополнительное': 
-                this.category.classList.add('card__category_additional');
+                this.category.classList.add(this.settings.categoryAdditional);
                 break;
             case 'кнопка': 
-                this.category.classList.add('card__category_button');
+                this.category.classList.add(this.settings.categoryButton);
                 break;
             default:
-                this.category.classList.add('card__category_other');
+                this.category.classList.add(this.settings.categoryOther);
         }
     }
 

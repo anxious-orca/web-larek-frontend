@@ -232,6 +232,11 @@ interface IViewCardSettings {
 	buttonAddToBasket: string; // кнопка добавить в корзину
 	buttonDelete: string; // кнопка удалить из корзины
 	event: string; // событие которое происходит при клике на карточку/кнопку
+	categorySoft: string; // класс категории софт-скил
+	categoryHard: string; // класс категории хард-скил
+	categoryOther: string; // класс категории другое
+	categoryAdditional: string; // класс категории дополнительное
+	categoryButton: string; // класс категории кнопка
 }
 
 interface IViewCardConstructor {

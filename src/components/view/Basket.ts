@@ -28,13 +28,11 @@ export class ViewBasket implements IViewBasket {
     }
 
     render(data?: BasketData) {
-        this.itemContainer.textContent = '';
         if (data) {
-            data.basketProducts.forEach(item => {
-                this.itemContainer.append(item);
-            })
+            this.itemContainer.replaceChildren(...data.basketProducts);
             this.price.textContent = formatCurrency(data.total);
         } else {
+            this.itemContainer.textContent = '';
             this.price.textContent = formatCurrency(0);
         }
         return this.element;
