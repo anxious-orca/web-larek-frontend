@@ -13,6 +13,9 @@ export interface CardData {
 export interface IViewCard {
 	id: string;
 	render(data?: Partial<CardData>): HTMLElement;
+	disable(): void;
+	enable(): void;
+	categoryColorControl(data: string): void;
 }
 
 export interface IViewCardSettings {

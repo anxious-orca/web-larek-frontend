@@ -18,8 +18,8 @@ import { ViewSuccess } from './components/view/Success';
 const pageSettings = { ...SETTINGS.pageSettings, event: AppStateModals.basket }
 const basketSettings = {...SETTINGS.basketSettings, event: AppStateModals.address}
 const userOrderInfoSettings = {...SETTINGS.userOrderInfoSettings, eventSubmit: AppStateModals.contacts, eventInput: AppStateChanges.address}
-const userContactsSettings = {...SETTINGS.userContactsSettings, eventSubmit: AppStateModals.success, eventInput: AppStateChanges.contacts}
-const successSettings = {...SETTINGS.successSettings, event: AppStateChanges.order}
+const userContactsSettings = {...SETTINGS.userContactsSettings, eventSubmit: AppStateChanges.order, eventInput: AppStateChanges.contacts}
+const successSettings = {...SETTINGS.successSettings, event: AppStateModals.success}
 
 const events = new EventEmitter();
 const api = new LarekApi(CDN_URL, API_URL);

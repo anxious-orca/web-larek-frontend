@@ -16,12 +16,12 @@ export enum AppStateModals {
 
 export enum AppStateChanges {
 	products = 'change:product',
-	order = 'change:order',
 	basket = 'change:basket',
 	addToBasket = 'change:addToBasket',
 	removeFromBasket = 'change:removeFromBasket',
 	address = 'change:inputAddress',
-	contacts = 'change:inputContacts'
+	contacts = 'change:inputContacts',
+	order = 'change:order'
 }
 
 export interface IAppState {
@@ -34,6 +34,7 @@ export interface IAppState {
 	basketTotal: number;
 	basketSize: number;
 	formatProduct(product: Product): BasketProduct;
+	isProductInBasket(id: string): boolean;
 	addProduct(id: string): void;
 	removeProduct(id: string): void;
 	clearBasket(): void;

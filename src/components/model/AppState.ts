@@ -61,8 +61,12 @@ export class AppState implements IAppState {
         };
     }
 
+    isProductInBasket(id: string) {
+        return !!this._basket.get(id);
+    }
+
     addProduct(id: string) {
-        if (!this._basket.get(id)) {
+        if (!this.isProductInBasket(id)) {
             this._basket.set(id, this.formatProduct(this.getProduct(id)))
         };
     }

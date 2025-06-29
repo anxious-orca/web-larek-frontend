@@ -41,17 +41,24 @@ export class Presenter {
             return cardCatalogView.render(product);
         })
         this.page.addContent({content: renderedCards, counter: this.model.basketSize});
+        this.basketRendered = this.basket.render();
 
         // событие открытия модалки с карточкой
         this.events.on<{id: string}>(AppStateModals.product, (data) => {
             const product = this.model.getProduct(data.id);
             const cardFullView = new this.cardConstructor(this.cardPreviewSettings, this.events);
+            if (this.model.isProductInBasket(data.id)) {
+                cardFullView.disable();
+            } else {
+                cardFullView.enable();
+            }
             this.modal.content = cardFullView.render(product);
             this.modal.open();
         })
 
         // событие изменения контента корзины
         this.events.on(AppStateChanges.basket, () => {
+            this.page.changeCounter(this.model.basketSize);
             if (this.model.basket !== null) {
                 const renderedCards = this.model.basket.map(product => {
                     const cardCompactView = new this.cardConstructor(this.cardBasketSettings, this.events);
@@ -68,7 +75,6 @@ export class Presenter {
         // событие добавления в корзину
         this.events.on<{id: string}>(AppStateChanges.addToBasket, (data) => {
             this.model.addProduct(data.id);
-            this.page.changeCounter(this.model.basketSize);
             this.events.emit(AppStateChanges.basket);
             this.modal.close();
         })
@@ -76,14 +82,11 @@ export class Presenter {
         // событие удаления из корзины
         this.events.on<{id: string}>(AppStateChanges.removeFromBasket, (data) => {
             this.model.removeProduct(data.id);
-            this.page.changeCounter(this.model.basketSize);
             this.events.emit(AppStateChanges.basket);
-            this.modal.content = this.basketRendered;
         })
 
         // событие открытия корзины
         this.events.on(AppStateModals.basket, () => {
-            this.events.emit(AppStateChanges.basket);
             this.modal.content = this.basketRendered;
             this.modal.open();
         })
@@ -131,12 +134,12 @@ export class Presenter {
         })
 
         // событие открытия окна успеха
-        this.events.on(AppStateModals.success, () => {
+        this.events.on(AppStateChanges.order , () => {
             this.api.orderProducts(this.model.order)
             .then(data => {
                 this.modal.content = this.success.render({total: data.total});
                 this.model.clearBasket();
-                this.page.changeCounter(this.model.basketSize);
+                this.events.emit(AppStateChanges.basket);
             })
             .catch(error => {
                 console.error("Error sending order:", error);
@@ -144,7 +147,7 @@ export class Presenter {
         })
 
         // событие закрытия окна успеха
-        this.events.on(AppStateChanges.order, () => {
+        this.events.on(AppStateModals.success, () => {
             this.modal.close();
         })
     }

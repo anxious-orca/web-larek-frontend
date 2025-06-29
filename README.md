@@ -121,12 +121,12 @@ enum AppStateModals {
 ```
 enum AppStateChanges {
 	products = 'change:product',
-	order = 'change:order',
 	basket = 'change:basket',
 	addToBasket = 'change:addToBasket',
 	removeFromBasket = 'change:removeFromBasket',
 	address = 'change:inputAddress',
-	contacts = 'change:inputContacts'
+	contacts = 'change:inputContacts',
+	order = 'change:order'
 }
 ```
 
@@ -174,6 +174,7 @@ enum AppStateChanges {
 - basketSize: number; - геттер количества товаров в корзине
 
 - formatProduct(product: Product): BasketProduct; - метод форматирования товара в товар корзины
+- isProductInBasket(id: string): boolean; - метод проверяющие есть ли уже товар в корзине
 - addProduct(id: string): void; - метод добавления товара в корзину
 - removeProduct(id: string): void; - метод удаления товара из корзины
 - clearBasket(): void; - метод очищения корзины
@@ -211,6 +212,9 @@ interface CardData {
 interface IViewCard {
 	id: string; // геттер id для обращения к конкретному продукту в модели
 	render(data?: Partial<CardData>): HTMLElement; // метод рендера разметки
+	disable(): void; // метод отключения кнопки
+	enable(): void; // метод включения кнопки
+	categoryColorControl(data: string): void; // метод контролирующий цвет категории
 }
 
 interface IViewCardSettings {
@@ -416,15 +420,15 @@ interface ILarekAPI extends Api {
 - 'modal:basket' - открытие модального окна с корзиной
 - 'modal:address' - открытие модального окна с адресом
 - 'modal:contacts' - открытие модального окна с почтой и телефоном
-- 'modal:success' - открытие модального окна с подтверждением
+- 'modal:success' - закрытие модального окна с подтверждением
 
 - 'change:product' - изменение списка товаров
-- 'change:order' - изменение в заказе, данных клиента
 - 'change:basket' - изменение в составе корзины
 - 'change:addToBasket' - добавление товара в корзину
 - 'change:removeFromBasket' - удаление товара из корзины
 - 'change:inputAddress' - изменение в input адреса
 - 'change:inputContacts' - изменение в input контактов
+- 'change:order' - отправка заказа на сервер
 
 
 

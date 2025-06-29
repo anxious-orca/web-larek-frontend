@@ -43,12 +43,42 @@ export class ViewCard implements IViewCard {
         this.price = ensureElement(settings.price, this.element);
     }
 
+    disable() {
+        this.addBasket.disabled = true;
+    };
+
+    enable() {
+        this.addBasket.disabled = false;
+    }
+
     set id(value: string) {
         this._id = value;
     }
 
     get id(): string {
         return this._id || '';
+    }
+
+    categoryColorControl(data: string) {
+        switch (data) {
+            case 'софт-скил': 
+                this.category.classList.add('card__category_soft');
+                break;
+            case 'хард-скил': 
+                this.category.classList.add('card__category_hard');
+                break;
+            case 'другое': 
+                this.category.classList.add('card__category_other');
+                break;
+            case 'дополнительное': 
+                this.category.classList.add('card__category_additional');
+                break;
+            case 'кнопка': 
+                this.category.classList.add('card__category_button');
+                break;
+            default:
+                this.category.classList.add('card__category_other');
+        }
     }
 
     render(data?: Partial<CardData>) {
@@ -59,15 +89,21 @@ export class ViewCard implements IViewCard {
         } else {
             this.price.textContent = formatCurrency(data.price);
         }
+
         if (this.settings.isFull) {
             this.description.textContent = data.description;
+            if (data.price === null) {
+                this.disable();
+            }
         }
+
         if (this.settings.isCompact) {
             this.index.textContent = data.index;
         } else {
             this.image.src = data.image;
             this.image.alt = `Изображение продукта: ${data.title}`;
             this.category.textContent = data.category;
+            this.categoryColorControl(data.category);
         }
         return this.element;
     }
