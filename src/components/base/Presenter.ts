@@ -133,7 +133,7 @@ export class Presenter {
             }
         })
 
-        // событие открытия окна успеха
+        // событие отправки заказа на сервер
         this.events.on(AppStateChanges.order , () => {
             this.api.orderProducts(this.model.order)
             .then(data => {
